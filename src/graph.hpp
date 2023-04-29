@@ -1,12 +1,17 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
-#include <vector>
-
 class Graph {
-public:
-    Graph(int num_vertices);
+   private:
+    int node_total;
+    int **graph_matrix;
+
+   public:
+    Graph();
+    Graph(int node_total);
+    void addEdge(int node_1, int node_2, int weight);
+    void printGraphMatrix();
     // Your code here
 };
 
-#endif // GRAPH_HPP
+#endif  // GRAPH_HPP
