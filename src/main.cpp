@@ -1,4 +1,7 @@
+#include <bits/stdc++.h>
+
 #include <iostream>
+#include <vector>
 
 #include "graph.hpp"
 
@@ -7,7 +10,7 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    // node_total: N, edge_total: A
+    // @var node_total: N
     int node_total, edge_total;
     std::cin >> node_total >> edge_total;
 
@@ -17,12 +20,30 @@ int main(int argc, char const *argv[]) {
     for (int i = 0; i < edge_total; i++) {
         std::cin >> node_1 >> node_2 >> weight;
 
+        // adiciona ao grafo apenas as arestas pares
         if (weight % 2 == 0) {
             travel_graph->addEdge(node_1, node_2, weight);
         }
     }
 
-    travel_graph->printGraphMatrix();
+    // travel_graph->printGraphMatrix();
+
+    // travel_graph->printGraphAdjacencyList();
+    vector<vector<int>> paths = travel_graph->findAllPaths(0, node_total - 1);
+    int min_weight = INT_MAX;
+    if (paths.empty())
+        std::cout << -1 << std::endl;
+    else {
+        vector<int> sizes;
+        for (auto path : paths) {
+            int path_weight = travel_graph->calcPathWeight(path);
+
+            if (path_weight < min_weight) min_weight = path_weight;
+            sizes.push_back(path_weight);
+        }
+    }
+
+    std::cout << min_weight << std::endl;
 
     return 0;
 }
