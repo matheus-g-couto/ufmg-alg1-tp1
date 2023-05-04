@@ -8,7 +8,7 @@ using namespace std;
 class Graph {
    private:
     int node_total;
-    int **graph_matrix;
+    vector<vector<pair<int, int>>> adjacency_list;
 
     /*
         Função recursiva que realiza a busca em profundidade na matriz do grafo
@@ -26,6 +26,8 @@ class Graph {
     // @param node_total: número de nós (cidades) no grafo
     Graph(int node_total);
 
+    ~Graph();
+
     /*
         Adicona uma aresta ao grafo
         @param node_1: extremidade da aresta
@@ -39,9 +41,6 @@ class Graph {
         @returns node_total: total de nós do grafo
     */
     int getNodeTotal();
-
-    // Imprime a matriz de adjacência do grafo
-    void printGraphMatrix();
 
     /*
         Calcula o peso total de um caminho

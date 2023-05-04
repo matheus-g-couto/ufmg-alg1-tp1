@@ -26,13 +26,10 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    // travel_graph->printGraphMatrix();
-
-    // travel_graph->printGraphAdjacencyList();
     vector<vector<int>> paths = travel_graph->findAllPaths(0, node_total - 1);
     int min_weight = INT_MAX;
     if (paths.empty())
-        std::cout << -1 << std::endl;
+        min_weight = -1;
     else {
         vector<int> sizes;
         for (auto path : paths) {
@@ -44,6 +41,8 @@ int main(int argc, char const *argv[]) {
     }
 
     std::cout << min_weight << std::endl;
+
+    delete travel_graph;
 
     return 0;
 }

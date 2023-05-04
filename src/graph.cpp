@@ -1,5 +1,7 @@
 #include "graph.hpp"
 
+#include <bits/stdc++.h>
+
 #include <iostream>
 #include <vector>
 
@@ -9,28 +11,20 @@ Graph::Graph() {}
 
 Graph::Graph(int node_total) {
     this->node_total = node_total;
+    this->adjacency_list.resize(node_total);
+}
 
-    graph_matrix = new int *[node_total];
-    for (int i = 0; i < node_total; i++) {
-        graph_matrix[i] = new int[node_total];
-    }
+Graph::~Graph() {
+    this->adjacency_list.resize(0);
+    this->node_total = -1;
 }
 
 void Graph::addEdge(int node_1, int node_2, int weight) {
-    graph_matrix[node_1 - 1][node_2 - 1] = graph_matrix[node_2 - 1][node_1 - 1] = weight;
+    adjacency_list[node_1 - 1].push_back({node_2 - 1, weight});
+    adjacency_list[node_2 - 1].push_back({node_1 - 1, weight});
 }
 
 int Graph::getNodeTotal() { return this->node_total; }
-
-void Graph::printGraphMatrix() {
-    for (int i = 0; i < node_total; i++) {
-        for (int j = 0; j < node_total; j++) {
-            std::cout << graph_matrix[i][j] << " ";
-        }
-
-        std::cout << std::endl;
-    }
-}
 
 // Busca em profundidade
 void Graph::dfs(int start, int end, vector<int> &path, vector<vector<int>> &paths, vector<bool> &visited) {
@@ -41,10 +35,9 @@ void Graph::dfs(int start, int end, vector<int> &path, vector<vector<int>> &path
         // Só armazena os caminhos com número ímpar de nós, portanto par de arestas
         if ((int)path.size() % 2 == 1) paths.push_back(path);
     } else {
-        for (int i = 0; i < this->node_total; i++) {
-            if (graph_matrix[start][i]) {
-                if (!visited[i]) dfs(i, end, path, paths, visited);
-            }
+        for (auto v : this->adjacency_list[start]) {
+            // v.first: identificador do nó vizinho
+            if (!visited[v.first]) dfs(v.first, end, path, paths, visited);
         }
     }
 
@@ -66,7 +59,12 @@ int Graph::calcPathWeight(vector<int> &path) {
     int path_size = path.size();
 
     for (int i = 0; i < path_size - 1; i++) {
-        weight += graph_matrix[path[i]][path[i + 1]];
+        for (auto node : this->adjacency_list[path[i]]) {
+            if (node.first == path[i + 1]) {
+                weight += node.second;
+                break;
+            }
+        }
     }
 
     return weight;
