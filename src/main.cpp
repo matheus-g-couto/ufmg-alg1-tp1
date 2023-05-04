@@ -26,21 +26,24 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    vector<vector<int>> paths = travel_graph->findAllPaths(0, node_total - 1);
-    int min_weight = INT_MAX;
-    if (paths.empty())
-        min_weight = -1;
-    else {
-        vector<int> sizes;
-        for (auto path : paths) {
-            int path_weight = travel_graph->calcPathWeight(path);
+    // vector<vector<int>> paths = travel_graph->findAllPaths(0, node_total - 1);
+    // int min_weight = INT_MAX;
+    // if (paths.empty())
+    //     min_weight = -1;
+    // else {
+    //     vector<int> sizes;
+    //     for (auto path : paths) {
+    //         int path_weight = travel_graph->calcPathWeight(path);
 
-            if (path_weight < min_weight) min_weight = path_weight;
-            sizes.push_back(path_weight);
-        }
-    }
+    //         if (path_weight < min_weight) min_weight = path_weight;
+    //         sizes.push_back(path_weight);
+    //     }
+    // }
 
-    std::cout << min_weight << std::endl;
+    // std::cout << min_weight << std::endl;
+
+    int distance = travel_graph->findPath();
+    std::cout << (distance == INF ? -1 : distance) << std::endl;
 
     delete travel_graph;
 

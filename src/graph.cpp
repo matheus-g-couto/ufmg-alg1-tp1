@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+#define INF 0x3f3f3f3f
+
 using namespace std;
 
 Graph::Graph() {}
@@ -12,10 +14,12 @@ Graph::Graph() {}
 Graph::Graph(int node_total) {
     this->node_total = node_total;
     this->adjacency_list.resize(node_total);
+    this->transformed_adjacency_list.resize(node_total);
 }
 
 Graph::~Graph() {
     this->adjacency_list.resize(0);
+    this->transformed_adjacency_list.resize(0);
     this->node_total = -1;
 }
 
@@ -24,48 +28,61 @@ void Graph::addEdge(int node_1, int node_2, int weight) {
     adjacency_list[node_2 - 1].push_back({node_1 - 1, weight});
 }
 
-int Graph::getNodeTotal() { return this->node_total; }
-
-// Busca em profundidade
-void Graph::dfs(int start, int end, vector<int> &path, vector<vector<int>> &paths, vector<bool> &visited) {
-    visited[start] = true;
-    path.push_back(start);
-
-    if (start == end) {
-        // Só armazena os caminhos com número ímpar de nós, portanto par de arestas
-        if ((int)path.size() % 2 == 1) paths.push_back(path);
-    } else {
-        for (auto v : this->adjacency_list[start]) {
-            // v.first: identificador do nó vizinho
-            if (!visited[v.first]) dfs(v.first, end, path, paths, visited);
-        }
-    }
-
-    path.pop_back();
-    visited[start] = false;
-}
-
-vector<vector<int>> Graph::findAllPaths(int start, int end) {
-    vector<vector<int>> paths;  // Todos os caminhos já explorados
-    vector<int> path;           // Caminho sendo explorado no momento
-    vector<bool> visited(this->node_total, false);
-
-    dfs(start, end, path, paths, visited);
-    return paths;
-}
-
-int Graph::calcPathWeight(vector<int> &path) {
-    int weight = 0;
-    int path_size = path.size();
-
-    for (int i = 0; i < path_size - 1; i++) {
-        for (auto node : this->adjacency_list[path[i]]) {
-            if (node.first == path[i + 1]) {
-                weight += node.second;
-                break;
+void Graph::transformGraph() {
+    for (int i = 0; i < node_total; i++) {
+        for (auto edge : this->adjacency_list[i]) {
+            for (auto second_edge : this->adjacency_list[edge.first]) {
+                if (second_edge.first > i) {
+                    transformed_adjacency_list[i].push_back({second_edge.first, edge.second + second_edge.second});
+                    transformed_adjacency_list[second_edge.first].push_back({i, edge.second + second_edge.second});
+                }
             }
         }
     }
+}
 
-    return weight;
+void Graph::dijkstra(vector<int> &path_weights) {
+    path_weights.assign(this->node_total, INF);
+    path_weights[0] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> heap;
+    // {vertice, distancia}
+    heap.push({0, 0});
+
+    while (!heap.empty()) {
+        int v = heap.top().first;
+        int dist = heap.top().second;
+        heap.pop();
+
+        if (dist > path_weights[v]) continue;
+
+        for (auto edge : this->transformed_adjacency_list[v]) {
+            if (path_weights[v] + edge.second < path_weights[edge.first]) {
+                path_weights[edge.first] = path_weights[v] + edge.second;
+                heap.push({edge.first, path_weights[edge.first]});
+            }
+        }
+    }
+}
+
+int Graph::findPath() {
+    vector<int> path_weights;
+    path_weights.resize(this->node_total);
+
+    this->transformGraph();
+    this->dijkstra(path_weights);
+
+    return path_weights[this->node_total - 1];
+}
+
+int Graph::getNodeTotal() { return this->node_total; }
+
+void Graph::printAdjacencyList() {
+    for (int i = 0; i < node_total; i++) {
+        std::cout << "Node " << i << ": { ";
+        for (int j = 0; j < (int)transformed_adjacency_list[i].size(); j++) {
+            std::cout << "(" << transformed_adjacency_list[i][j].first << "," << transformed_adjacency_list[i][j].second
+                      << ") ";
+        }
+        std::cout << "}" << std::endl;
+    }
 }

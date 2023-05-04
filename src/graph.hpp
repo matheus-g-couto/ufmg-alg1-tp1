@@ -9,16 +9,19 @@ class Graph {
    private:
     int node_total;
     vector<vector<pair<int, int>>> adjacency_list;
+    vector<vector<pair<int, int>>> transformed_adjacency_list;
 
     /*
-        Função recursiva que realiza a busca em profundidade na matriz do grafo
-        @param start: nó de inicio da DFS
-        @param end: nó destino da busca
-        @param &path: caminho que está sendo construído
-        @param &paths: vetor de todos os caminhos construídos até o momento
-        @param &visited: flag que mantém controle de quais nós já foram visitados na busca atual
+        Processa o grafo original, de maneira que cada par de arestas (u,v) e (v,w) no grafo original se transforma numa
+        aresta (u,w) com os pesos das outras duas somados
     */
-    void dfs(int start, int end, vector<int> &path, vector<vector<int>> &paths, vector<bool> &visited);
+    void transformGraph();
+
+    /*
+        Executa o algoritmo de Dijkstra no grafo transformado
+        @param &path_weights: vetor que armazena a distância mínima entre a origem e todos os vértices do grafo
+    */
+    void dijkstra(vector<int> &path_weights);
 
    public:
     Graph();
@@ -42,20 +45,14 @@ class Graph {
     */
     int getNodeTotal();
 
-    /*
-        Calcula o peso total de um caminho
-        @param &path: caminho cujo peso deve ser calculado
-        @returns weight: peso total do caminho
-    */
-    int calcPathWeight(vector<int> &path);
+    // Imprime a lista de adjacências do grafo
+    void printAdjacencyList();
 
     /*
-        Encontra todos os caminhos possíveis entre dois nós do grafo, respeitando as condições impostas pelo problema
-        O pair representa o caminho e o tamanho total dele
-        @param start: começo do caminho
-        @param end: fim do caminho
+        Encontra o caminho mais curto entre a origem e o destino
+        @returns distance: menor distância entre a origem e o destino
     */
-    vector<vector<int>> findAllPaths(int start, int end);
+    int findPath();
 };
 
 #endif  // GRAPH_HPP
