@@ -29,6 +29,7 @@ void Graph::addEdge(int node_1, int node_2, int weight) {
 }
 
 void Graph::transformGraph() {
+    // Itera na lista de adjacências de cada vértice e transforma o grafo original
     for (int i = 0; i < node_total; i++) {
         for (auto edge : this->adjacency_list[i]) {
             for (auto second_edge : this->adjacency_list[edge.first]) {
@@ -44,9 +45,11 @@ void Graph::transformGraph() {
 void Graph::dijkstra(vector<int> &path_weights) {
     path_weights.assign(this->node_total, INF);
     path_weights[0] = 0;
+
+    // lista de prioridades que funciona como um heap
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> heap;
-    // {vertice, distancia}
-    heap.push({0, 0});
+
+    heap.push({0, 0});  // {vertice, distancia}
 
     while (!heap.empty()) {
         int v = heap.top().first;
